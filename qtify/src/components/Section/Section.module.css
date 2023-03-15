@@ -1,0 +1,18 @@
+.section {
+  margin: 0px 32px;
+}
+.wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cardsWrapper {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+.showAll {
+  color: var(--color-primary);
+  cursor: pointer;
+}

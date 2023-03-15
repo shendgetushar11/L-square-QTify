@@ -1,7 +1,8 @@
 import React from "react";
 import styles from "./Card.module.css";
 
-function Card({ image, follows, title }) {
+function Card({ data }) {
+  const { image, follows, title } = data;
   return (
     <div className={styles.wrapper}>
       <div className={styles.card}>
