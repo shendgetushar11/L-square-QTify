@@ -2,20 +2,41 @@ import React, { useEffect, useState } from "react";
 import Card from "../Card/Card";
 import styles from "./Section.module.css";
 import Carousel from "../Carousel/Carousel";
+import Filters from "../Filters/Filters";
 
-function Section({ title, dataSource }) {
-  const [cards, setCards] = useState([]);
+function Section({ title, dataSource, filterSource, type }) {
+  const [data, setData] = useState([]);
+  const [filters, setFilters] = useState([{ key: "all", label: "All" }]);
+  const [selectedFilterIndex, setSelectedFilterIndex] = useState(0);
   const [isShowAll, setIsShowAll] = useState(false);
 
-  useEffect(() => {
-    dataSource().then((data) => {
-      setCards(data);
-    });
-  }, []);
+  const fetchData = async (source) => {
+    const data = await source();
+    setData(data || []);
+  };
 
   const handleToggle = () => {
     setIsShowAll((prevState) => !prevState);
   };
+
+  useEffect(() => {
+    fetchData(dataSource);
+
+    if (filterSource) {
+      filterSource().then((response) => {
+        const { data } = response;
+        // setFilters(data);
+        setFilters([...filters, ...data]);
+      });
+    }
+  }, []);
+
+  console.log(filters);
+  const filterCards = data.filter((card) =>
+    selectedFilterIndex !== 0
+      ? card.genre.key === filters[selectedFilterIndex].key
+      : card
+  );
 
   return (
     <div className={styles.section}>
@@ -27,21 +48,29 @@ function Section({ title, dataSource }) {
           <h4>{!isShowAll ? "Show All" : "Collapse"}</h4>
         </div>
       </div>
+      {filterSource && (
+        <Filters
+          data={filters}
+          selectedFilteredIndex={selectedFilterIndex}
+          setSelectedFilterIndex={setSelectedFilterIndex}
+        />
+      )}
       <div className={styles.cardsWrapper}>
         {isShowAll ? (
-          cards.map((card) => (
+          filterCards.map((card) => (
             <Card
               data={{
                 title: card.title,
                 image: card.image,
                 follows: card.follows,
               }}
+              type={type}
             />
           ))
         ) : (
           <Carousel
-            data={cards}
-            renderComponent={(data) => <Card data={data} />}
+            data={filterCards}
+            renderComponent={(data) => <Card data={data} type={type} />}
           />
         )}
       </div>
