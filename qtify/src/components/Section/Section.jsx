@@ -26,10 +26,10 @@ function Section({ title, dataSource, filterSource, type }) {
       filterSource().then((response) => {
         const { data } = response;
         // setFilters(data);
-        setFilters([...filters, ...data]);
+        setFilters((filters) => [...filters, ...data]);
       });
     }
-  }, []);
+  }, [dataSource, filterSource, filters]);
 
   console.log(filters);
   const filterCards = data.filter((card) =>
